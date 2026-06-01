@@ -4,21 +4,15 @@ pipeline {
 
     stages {
 
-        /**
-         * 🐳 ETAPA 1: CONSTRUIR CONTENEDORES
-         */
         stage('Build Docker') {
             steps {
-                sh 'docker-compose build'
+                sh 'docker build -t noteflow-api ./api'
             }
         }
 
-        /**
-         * 🚀 ETAPA 2: DESPLEGAR SERVICIOS
-         */
         stage('Deploy') {
             steps {
-                sh 'docker-compose up -d'
+                sh 'docker run -d -p 3001:3000 noteflow-api || true'
             }
         }
     }
