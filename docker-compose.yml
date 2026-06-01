@@ -9,63 +9,53 @@ services:
   # ======================================================
   api:
     build: ./api
-    # 🔸 Construye la imagen usando el Dockerfile ubicado en /api
-
     ports:
       - "3000:3000"
-    # 🔸 Expone el puerto 3000 del contenedor al host
 
     depends_on:
       - mongo
-    # 🔸 Garantiza que MongoDB se inicie antes que la API
 
     environment:
       - MONGO_URL=mongodb://mongo:27017/noteflow
-    # 🔸 Variable de entorno para conexión a la base de datos
-    # 🔸 "mongo" es el nombre del servicio (hostname interno)
 
   # ======================================================
   # 🔹 SERVICIO: BASE DE DATOS (MongoDB)
   # ======================================================
   mongo:
     image: mongo
-    # 🔸 Usa la imagen oficial de MongoDB desde Docker Hub
 
     ports:
       - "27017:27017"
-    # 🔸 Expone el puerto de MongoDB
 
     volumes:
       - mongo_data:/data/db
-    # 🔸 Permite persistencia de datos (no se borran al apagar)
 
   # ======================================================
-  # 🔹 SERVICIO: JENKINS (Integración Continua)
+  # 🔹 SERVICIO: JENKINS (CON DOCKER INSTALADO)
   # ======================================================
   jenkins:
-    image: jenkins/jenkins:lts
-    # 🔸 Imagen oficial de Jenkins (Long Term Support)
+    build:
+      context: .
+      dockerfile: Dockerfile.jenkins
+    # 🔸 Ahora usamos una imagen personalizada (NO la oficial directa)
+
+    user: root
+    # 🔸 Permisos necesarios para ejecutar Docker
 
     ports:
       - "8080:8080"
       - "50000:50000"
-    # 🔸 8080 → Interfaz web
-    # 🔸 50000 → Comunicación interna de Jenkins
 
     volumes:
       - jenkins_home:/var/jenkins_home
       - /var/run/docker.sock:/var/run/docker.sock
-    # 🔸 Persistencia de configuración, usuarios y pipelines
+    # 🔸 Conecta Jenkins con Docker del host
 
     restart: always
-    # 🔸 Reinicia automáticamente si el contenedor falla
 
 # ======================================================
 # 💾 DEFINICIÓN DE VOLÚMENES
 # ======================================================
 volumes:
   mongo_data:
-    # 🔸 Almacena datos de MongoDB de forma persistente
-
   jenkins_home:
-    # 🔸 Guarda configuración y estado de Jenkins

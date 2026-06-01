@@ -1,0 +1,15 @@
+# ======================================================
+# 🐳 IMAGEN PERSONALIZADA DE JENKINS CON DOCKER
+# ======================================================
+
+FROM jenkins/jenkins:lts
+
+# 🔹 Cambiamos a usuario root para instalar paquetes
+USER root
+
+# 🔹 Instalamos Docker CLI dentro del contenedor
+RUN apt-get update && \
+    apt-get install -y docker.io
+
+# 🔹 Volvemos al usuario Jenkins por seguridad
+USER jenkins
