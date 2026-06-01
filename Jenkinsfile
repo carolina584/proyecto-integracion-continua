@@ -21,7 +21,7 @@ pipeline {
          */
         stage('Clonar repositorio') {
             steps {
-                git 'https://github.com/carolina584/proyecto-integracion-continua.git'
+               git branch: 'main', url: 'https://github.com/carolina584/proyecto-integracion-continua.git'
             }
         }
 
