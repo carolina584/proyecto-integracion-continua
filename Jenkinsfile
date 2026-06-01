@@ -12,9 +12,13 @@ pipeline {
 
         stage('Deploy') {
             steps {
-                sh 'docker run -d -p 3001:3000 noteflow-api || true'
-            }
-        }
+                sh '''
+                docker stop noteflow-container || true
+                docker rm noteflow-container || true
+                docker run -d -p 3001:3000 --name noteflow-container noteflow-api
+                '''
+    }
+}
     }
 
     post {
