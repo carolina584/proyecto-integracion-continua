@@ -1,31 +1,71 @@
 version: "3.8"
 
+# ======================================================
+# 📦 DEFINICIÓN DE SERVICIOS
+# ======================================================
 services:
-  db:
-    image: mysql:8.0
-    restart: always
-    environment:
-      MYSQL_ROOT_PASSWORD: example
-      MYSQL_DATABASE: proyecto
-    ports:
-      - "3306:3306"
-    volumes:
-      - db_data:/var/lib/mysql
-
+  # ======================================================
+  # 🔹 SERVICIO: API (Backend Node.js)
+  # ======================================================
   api:
-    build: ./docker/api
-    restart: always
+    build: ./api
+    # 🔸 Construye la imagen usando el Dockerfile ubicado en /api
+
     ports:
       - "3000:3000"
+    # 🔸 Expone el puerto 3000 del contenedor al host
+
     depends_on:
-      - db
+      - mongo
+    # 🔸 Garantiza que MongoDB se inicie antes que la API
+
     environment:
-      DB_HOST: db
-      DB_USER: root
-      DB_PASSWORD: example
-      DB_NAME: proyecto
+      - MONGO_URL=mongodb://mongo:27017/noteflow
+    # 🔸 Variable de entorno para conexión a la base de datos
+    # 🔸 "mongo" es el nombre del servicio (hostname interno)
 
+  # ======================================================
+  # 🔹 SERVICIO: BASE DE DATOS (MongoDB)
+  # ======================================================
+  mongo:
+    image: mongo
+    # 🔸 Usa la imagen oficial de MongoDB desde Docker Hub
+
+    ports:
+      - "27017:27017"
+    # 🔸 Expone el puerto de MongoDB
+
+    volumes:
+      - mongo_data:/data/db
+    # 🔸 Permite persistencia de datos (no se borran al apagar)
+
+  # ======================================================
+  # 🔹 SERVICIO: JENKINS (Integración Continua)
+  # ======================================================
+  jenkins:
+    image: jenkins/jenkins:lts
+    # 🔸 Imagen oficial de Jenkins (Long Term Support)
+
+    ports:
+      - "8080:8080"
+      - "50000:50000"
+    # 🔸 8080 → Interfaz web
+    # 🔸 50000 → Comunicación interna de Jenkins
+
+    volumes:
+      - jenkins_home:/var/jenkins_home
+      - /var/run/docker.sock:/var/run/docker.sock
+    # 🔸 Persistencia de configuración, usuarios y pipelines
+
+    restart: always
+    # 🔸 Reinicia automáticamente si el contenedor falla
+
+# ======================================================
+# 💾 DEFINICIÓN DE VOLÚMENES
+# ======================================================
 volumes:
-  db_data:
+  mongo_data:
+    # 🔸 Almacena datos de MongoDB de forma persistente
 
-
+  jenkins_home:
+    # 🔸 Guarda configuración y estado de Jenkins
