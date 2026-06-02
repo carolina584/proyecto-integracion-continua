@@ -1,71 +1,119 @@
 # NoteFlow 📝
 
-Sistema de gestión de tareas (To-Do List) desarrollado bajo una
-arquitectura basada en microservicios, implementando principios de
-Integración Continua mediante el uso de Docker y GitHub.
-
-------------------------------------------------------------------------
-
 ## 🚀 Descripción del Proyecto
 
-**NoteFlow** es una aplicación backend que permite:
+**NoteFlow** es un sistema de gestión de tareas (To-Do List) desarrollado como parte de un proyecto académico enfocado en la implementación de Integración Continua (CI).
 
--   Crear tareas
--   Consultar tareas
--   Actualizar tareas
--   Eliminar tareas
+La aplicación permite gestionar tareas mediante una API REST construida con Node.js y Express, utilizando MongoDB como base de datos y Docker para la contenerización de todos los servicios.
 
-Está desarrollada con **Node.js** y **Express**, utilizando **MongoDB**
-como base de datos y Docker para contenerización.
+---
 
-------------------------------------------------------------------------
+## 🎯 Funcionalidades
 
-## 🛠️ Tecnologías
+- Crear tareas
+- Consultar tareas
+- Actualizar tareas
+- Eliminar tareas
 
--   Node.js
--   Express.js
--   MongoDB
--   Docker
--   Docker Compose
--   GitHub
+Cada tarea contiene:
 
-------------------------------------------------------------------------
+- Título
+- Descripción
+- Prioridad
+- Estado (completado / pendiente)
 
-## 📦 Arquitectura
+---
 
--   API (Node.js)
--   Base de datos (MongoDB)
+## 🛠️ Tecnologías Utilizadas
 
-------------------------------------------------------------------------
+- Node.js
+- Express.js
+- MongoDB
+- Docker
+- Docker Compose
+- Jenkins (CI/CD)
+- GitHub
 
-## 📁 Estructura
+---
 
-    NoteFlow/
-    ├── src/
-    ├── Dockerfile
-    ├── docker-compose.yml
-    └── README.md
+## 🏗️ Arquitectura del Sistema
 
-------------------------------------------------------------------------
+El sistema está compuesto por tres servicios principales:
 
-## ⚙️ Ejecución
+- API (Node.js)
+- Base de datos (MongoDB)
+- Servidor de integración continua (Jenkins)
 
-    git clone https://github.com/carolina584/proyecto-integracion-continua.git
-    cd proyecto-integracion-continua
-    docker-compose up --build
+Todos los servicios se ejecutan en contenedores Docker.
 
-------------------------------------------------------------------------
+---
+
+## 📁 Estructura del Proyecto
+
+Proyecto-integracion-continua/
+├── api/
+│ ├── Dockerfile
+│ ├── index.js
+│ └── package.json
+├── docker-compose.yml
+├── Dockerfile.jenkins
+├── Jenkinsfile
+└── README.md
+
+---
+
+## ⚙️ Ejecución del Proyecto
+
+### 1. Clonar repositorio
+
+git clone https://github.com/carolina584/proyecto-integracion-continua.git
+cd proyecto-integracion-continua
+
+### 2. Levantar servicios
+
+docker compose up --build
+
+### 3. Verificar servicios
+
+docker ps
+
+---
+
+## 🌐 Accesos
+
+- API: http://localhost:3000
+- Jenkins: http://localhost:8080
+- MongoDB: puerto 27017
+
+---
+
+## 🔌 Endpoints principales
+
+GET /tasks  
+POST /tasks  
+PUT /tasks/:id  
+DELETE /tasks/:id
+
+---
+
+## 🔄 Integración Continua (Jenkins)
+
+El pipeline realiza:
+
+1. Clonar repositorio
+2. Construir imagen Docker
+3. Desplegar contenedor
 
 ## 👥 Autores (Grupo 9)
 
--   Yina Carolina Muñoz Perez
--   Miguel Augusto Rojas Hernandez
--   Johan Stiwer Cañon Cadena
--   Hector David Toledo Garcia
--   Feder Ramírez Madrigal
+- Yina Carolina Muñoz Perez
+- Miguel Augusto Rojas Hernandez
+- Johan Stiwer Cañon Cadena
+- Hector David Toledo Garcia
+- Feder Ramírez Madrigal
 
-------------------------------------------------------------------------
+---
 
 ## 📖 Estado
 
-Proyecto académico - Semana 3
+Proyecto académico - Integración Continua con Docker y Jenkins

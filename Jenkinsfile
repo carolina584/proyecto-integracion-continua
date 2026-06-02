@@ -15,7 +15,12 @@ pipeline {
                 sh '''
                 docker stop noteflow-container || true
                 docker rm noteflow-container || true
-                docker run -d -p 3001:3000 --name noteflow-container noteflow-api
+                docker run -d \
+                -p 3001:3000 \
+                --name noteflow-container \
+                --network proyecto-integracion-continua_default \
+                -e MONGO_URL=mongodb://mongo:27017/noteflow \
+                noteflow-api
                 '''
     }
 }
