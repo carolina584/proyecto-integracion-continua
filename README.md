@@ -50,15 +50,18 @@ Todos los servicios se ejecutan en contenedores Docker.
 
 ## 📁 Estructura del Proyecto
 
+```text
 Proyecto-integracion-continua/
 ├── api/
-│ ├── Dockerfile
-│ ├── index.js
-│ └── package.json
+│   ├── Dockerfile
+│   ├── index.js
+│   ├── package.json
+│   └── .env (generado localmente)
 ├── docker-compose.yml
 ├── Dockerfile.jenkins
 ├── Jenkinsfile
 └── README.md
+```
 
 ---
 
