@@ -16,80 +16,98 @@ const mongoose = require("mongoose");
 
 // 🔹 Inicialización de la aplicación
 const app = express();
-const PORT = 3000;
+const PORT = process.env.PORT || 3000;
 
-// 🔹 Middleware para manejar JSON en las peticiones
+// 🔹 Middleware
 app.use(express.json());
+
+// Middleware básico de CORS (permite peticiones desde cualquier origen)
+app.use((req, res, next) => {
+  res.header("Access-Control-Allow-Origin", "*");
+  res.header("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS");
+  res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+  if (req.method === "OPTIONS") {
+    return res.sendStatus(200);
+  }
+  next();
+});
 
 /**
  * ======================================================
  * 🔌 CONEXIÓN A BASE DE DATOS (MongoDB)
  * ======================================================
- * Se conecta usando la variable de entorno definida
- * en docker-compose.yml
  */
+const MONGO_URL = process.env.MONGO_URL;
+if (!MONGO_URL) {
+  console.error("❌ ERROR CRÍTICO: La variable de entorno MONGO_URL no está definida.");
+  process.exit(1);
+}
+
 mongoose
-  .connect(process.env.MONGO_URL)
+  .connect(MONGO_URL)
   .then(() => console.log("✅ Conexión exitosa a MongoDB"))
-  .catch((err) => console.error("❌ Error de conexión a MongoDB:", err));
+  .catch((err) => {
+    console.error("❌ Error de conexión a MongoDB:", err);
+    process.exit(1);
+  });
 
 /**
  * ======================================================
  * 🧱 MODELO DE DATOS: TASK
  * ======================================================
- * Representa una tarea dentro del sistema NoteFlow
  */
 const Task = mongoose.model("Task", {
   title: {
     type: String,
-    required: true, // Campo obligatorio
+    required: true,
+    trim: true, // Elimina espacios en blanco innecesarios
   },
   description: {
     type: String,
-    default: "", // Descripción opcional
+    default: "",
+    trim: true,
   },
   completed: {
     type: Boolean,
-    default: false, // Estado inicial: no completada
+    default: false,
   },
   priority: {
     type: String,
-    enum: ["low", "medium", "high"], // Valores permitidos
+    enum: ["low", "medium", "high"],
     default: "medium",
   },
   createdAt: {
     type: Date,
-    default: Date.now, // Fecha automática de creación
+    default: Date.now,
   },
 });
 
 /**
  * ======================================================
  * 📌 ENDPOINT: Obtener todas las tareas
- * Método: GET
- * Ruta: /tasks
  * ======================================================
  */
 app.get("/tasks", async (req, res) => {
   try {
-    const tasks = await Task.find();
+    const tasks = await Task.find().sort({ createdAt: -1 }); // Ordenadas por la más reciente
     res.json(tasks);
   } catch (error) {
-    res.status(500).json({
-      error: "Error al obtener las tareas",
-    });
+    console.error("Error en GET /tasks:", error);
+    res.status(500).json({ error: "Error al obtener las tareas" });
   }
 });
 
 /**
  * ======================================================
  * 📌 ENDPOINT: Crear una nueva tarea
- * Método: POST
- * Ruta: /tasks
  * ======================================================
  */
 app.post("/tasks", async (req, res) => {
   try {
+    if (!req.body.title) {
+      return res.status(400).json({ error: "El campo 'title' es obligatorio" });
+    }
+
     const task = new Task({
       title: req.body.title,
       description: req.body.description,
@@ -97,29 +115,25 @@ app.post("/tasks", async (req, res) => {
     });
 
     await task.save();
-
     res.status(201).json(task);
   } catch (error) {
-    res.status(500).json({
-      error: "Error al crear la tarea",
-    });
+    console.error("Error en POST /tasks:", error);
+    res.status(500).json({ error: "Error al crear la tarea" });
   }
 });
 
 /**
  * ======================================================
  * 📌 ENDPOINT: Actualizar una tarea
- * Método: PUT
- * Ruta: /tasks/:id
  * ======================================================
- * Permite actualizar:
- * - title
- * - description
- * - completed
- * - priority
  */
 app.put("/tasks/:id", async (req, res) => {
   try {
+    // Validar si el ID proporcionado es un formato válido de MongoDB
+    if (!mongoose.Types.ObjectId.isValid(req.params.id)) {
+      return res.status(400).json({ error: "Formato de ID no válido" });
+    }
+
     const updatedTask = await Task.findByIdAndUpdate(
       req.params.id,
       {
@@ -130,56 +144,48 @@ app.put("/tasks/:id", async (req, res) => {
       },
       {
         new: true, // Devuelve el objeto actualizado
-        runValidators: true, // Valida el esquema
-      },
+        runValidators: true, // Ejecuta las validaciones del modelo
+      }
     );
 
     if (!updatedTask) {
-      return res.status(404).json({
-        error: "Tarea no encontrada",
-      });
+      return res.status(404).json({ error: "Tarea no encontrada" });
     }
 
     res.json(updatedTask);
   } catch (error) {
-    res.status(500).json({
-      error: "Error al actualizar la tarea",
-    });
+    console.error(`Error en PUT /tasks/${req.params.id}:`, error);
+    res.status(500).json({ error: "Error al actualizar la tarea" });
   }
 });
 
 /**
  * ======================================================
  * 📌 ENDPOINT: Eliminar una tarea
- * Método: DELETE
- * Ruta: /tasks/:id
  * ======================================================
  */
 app.delete("/tasks/:id", async (req, res) => {
   try {
+    if (!mongoose.Types.ObjectId.isValid(req.params.id)) {
+      return res.status(400).json({ error: "Formato de ID no válido" });
+    }
+
     const deleted = await Task.findByIdAndDelete(req.params.id);
 
     if (!deleted) {
-      return res.status(404).json({
-        error: "Tarea no encontrada",
-      });
+      return res.status(404).json({ error: "Tarea no encontrada" });
     }
 
-    res.json({
-      message: "Tarea eliminada correctamente",
-    });
+    res.json({ message: "Tarea eliminada correctamente", deletedTaskId: deleted._id });
   } catch (error) {
-    res.status(500).json({
-      error: "Error al eliminar la tarea",
-    });
+    console.error(`Error en DELETE /tasks/${req.params.id}:`, error);
+    res.status(500).json({ error: "Error al eliminar la tarea" });
   }
 });
 
 /**
  * ======================================================
  * 📌 ENDPOINT BASE
- * Método: GET
- * Ruta: /
  * ======================================================
  */
 app.get("/", (req, res) => {
@@ -192,5 +198,5 @@ app.get("/", (req, res) => {
  * ======================================================
  */
 app.listen(PORT, "0.0.0.0", () => {
-  console.log(`Servidor corriendo en http://localhost:${PORT}`);
+  console.log(`🚀 Servidor corriendo en http://localhost:${PORT}`);
 });
