@@ -1,0 +1,11 @@
+api:
+  build: ./api
+  depends_on:
+    - mongo
+  environment:
+    - MONGO_URL=mongodb://mongo:27017/noteflow
+    
+mongo:
+  image: mongo:latest
+  ports:
+    - "27017:27017"

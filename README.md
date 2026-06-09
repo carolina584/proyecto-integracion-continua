@@ -26,25 +26,25 @@ Cada tarea contiene:
 
 ## 🛠️ Tecnologías Utilizadas
 
-- Node.js
-- Express.js
-- MongoDB
-- Docker
-- Docker Compose
-- Jenkins (CI/CD)
-- GitHub
+- **Frontend:** React, Vite, Tailwind CSS, Redux Toolkit (RTK)
+- **Backend:** Node.js, Express.js
+- **Base de Datos:** MongoDB
+- **Contenedores:** Docker, Docker Compose
+- **CI/CD:** Jenkins, Travis CI, Codeship
+- **Control de Versiones:** GitHub
 
 ---
 
 ## 🏗️ Arquitectura del Sistema
 
-El sistema está compuesto por tres servicios principales:
+El sistema está compuesto por los siguientes servicios principales:
 
-- API (Node.js)
-- Base de datos (MongoDB)
-- Servidor de integración continua (Jenkins)
+- **Frontend (Cliente SPA):** Aplicación React servida por Vite.
+- **API (Backend Node.js):** REST API construida con Express.
+- **Base de datos:** MongoDB para almacenamiento NoSQL.
+- **Servidor CI:** Jenkins para integración y despliegue continuo.
 
-Todos los servicios se ejecutan en contenedores Docker.
+Todos los servicios se ejecutan en contenedores Docker mediante `docker-compose.yml`.
 
 ---
 
@@ -57,9 +57,18 @@ Proyecto-integracion-continua/
 │   ├── index.js
 │   ├── package.json
 │   └── .env (generado localmente)
+├── frontend/
+│   ├── Dockerfile
+│   ├── src/
+│   ├── package.json
+│   └── vite.config.js
 ├── docker-compose.yml
 ├── Dockerfile.jenkins
 ├── Jenkinsfile
+├── .travis.yml
+├── codeship-services.yml
+├── codeship-steps.yml
+├── DOCUMENTO_ENTREGA_3.md
 └── README.md
 ```
 
@@ -84,9 +93,10 @@ docker ps
 
 ## 🌐 Accesos
 
-- API: http://localhost:3000
-- Jenkins: http://localhost:8080
-- MongoDB: puerto 27017
+- **Frontend (Web App):** http://localhost:5173
+- **API (Backend):** http://localhost:3000
+- **Jenkins:** http://localhost:8080
+- **MongoDB:** puerto 27017
 
 ---
 

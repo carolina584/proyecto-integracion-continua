@@ -1,0 +1,3 @@
+- name: Install dependencies and test syntax
+  service: api
+  command: bash -c "npm install && node --check index.js"

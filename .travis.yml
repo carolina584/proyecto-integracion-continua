@@ -1,0 +1,25 @@
+language: node_js
+node_js:
+  - "20"
+services:
+  - docker
+  - mongodb
+
+cache:
+  directories:
+    - "api/node_modules"
+
+before_install:
+  - cd api
+  - npm ci
+
+script:
+  # Verifica que la sintaxis y ejecución básica del index.js sea correcta (solo un check sintáctico)
+  - node --check index.js
+  # Construye la imagen de docker
+  - cd ..
+  - docker build -t noteflow-api ./api
+
+# (Opcional) Notificaciones en caso de falla
+notifications:
+  email: false
