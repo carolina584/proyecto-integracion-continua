@@ -47,7 +47,7 @@ La distribución equitativa y la colaboración fueron clave en el éxito de la E
 
 ### Puntos Destacados del Frontend:
 - **Tecnologías:** React 19 (mediante Vite), Tailwind CSS v4 para el diseño responsivo, y Redux Toolkit (RTK) para la gestión del estado global asíncrono.
-- **`[App.jsx](file:///c:/Users/hdtol/OnehDrive/Documents/2026/Poli/2026-1/Integracion%20Continua/Entrega%201%20Semana%203/proyecto-integracion-continua/frontend/src/App.jsx)`:** Estructura principal modernizada y centralizada en una sola columna.
+- **App.jsx:** Estructura principal modernizada y centralizada en una sola columna.
 - **Sistema de Modales:** La interfaz es altamente interactiva, utilizando ventanas flotantes (`Modal.jsx`) tanto para la creación y edición de tareas, como para confirmar eliminaciones sin usar los "alerts" por defecto del navegador.
 - **Diseño Moderno:** Uso de iconos limpios (con `lucide-react`) y paleta de colores agradables (`bg-blue-600`, etc.), estados vacíos (*Empty States*) cuando no hay tareas, y feedback de estado (Cargando, Error).
 
